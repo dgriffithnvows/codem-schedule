@@ -10,6 +10,8 @@ gem 'simple_form'
 gem 'chronic'
 gem 'nokogiri'
 
+gem 'carrierwave'
+
 group :development, :test do
   gem 'rspec-rails'
 end

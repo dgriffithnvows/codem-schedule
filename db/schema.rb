@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130711090119) do
+ActiveRecord::Schema.define(:version => 20140121160143) do
 
   create_table "deliveries", :force => true do |t|
     t.integer  "notification_id", :null => false
@@ -96,5 +96,12 @@ ActiveRecord::Schema.define(:version => 20130711090119) do
   end
 
   add_index "state_changes", ["job_id"], :name => "index_state_changes_on_job_id"
+
+  create_table "uploads", :force => true do |t|
+    t.string   "name",       :null => false
+    t.string   "video",      :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
 end

@@ -1,2 +1,2 @@
-ActionMailer::Base.default :from => "info@codem.com"
-ActionMailer::Base.default_url_options[:host] = "localhost:3000"
+ActionMailer::Base.default :from => "dgriffith@nvows.com"
+ActionMailer::Base.default_url_options[:host] = "127.0.0.1:8080"

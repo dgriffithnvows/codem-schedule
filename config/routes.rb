@@ -34,6 +34,8 @@ Scheduler::Application.routes.draw do
   resources :jobs
   
   resources :presets, :hosts
+
+  resources :uploads
   
   root :to => 'dashboard#show'
 end
