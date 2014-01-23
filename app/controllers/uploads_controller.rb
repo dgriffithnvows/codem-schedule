@@ -17,6 +17,7 @@ class UploadsController < ApplicationController
       redirect_to uploads_path
     else
       flash[:notice] = "Could not create webinar"
+      render :action => 'new'
     end
   end
   def edit
