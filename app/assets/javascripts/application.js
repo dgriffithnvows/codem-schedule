@@ -8,4 +8,5 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require bootstrap_ujs
+//= require jquery-fileupload/basic
 //= require_directory .

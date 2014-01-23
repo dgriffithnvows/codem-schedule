@@ -10,7 +10,7 @@
     <%= f.text_field :name %>
   </p>
   <p>
-    <%= f.file_field :video %>
+    <%= f.file_field :video, multiple: true, name: "upload[video]" %>
   </p>
   <p>
     <%= f.submit %>

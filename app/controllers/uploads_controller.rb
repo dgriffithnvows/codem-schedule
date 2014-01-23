@@ -11,14 +11,15 @@ class UploadsController < ApplicationController
     @upload = Upload.new()
   end
   def create
-    @upload = Upload.new(params[:upload])
-    if @upload.save
-      flash[:notice] = "Successfully created webinar"
-      redirect_to uploads_path
-    else
-      flash[:notice] = "Could not create webinar"
-      render :action => 'new'
-    end
+    @upload = Upload.create(params[:upload]) # This is now handled in app/views/uploads/create.js.erb
+
+#    if @upload.save
+#      flash[:notice] = "Successfully created webinar"
+#      redirect_to uploads_path
+#    else
+#      flash[:notice] = "Could not create webinar"
+#      render :action => 'new'
+#    end
   end
   def edit
     @upload = Upload.find(params[:id])
