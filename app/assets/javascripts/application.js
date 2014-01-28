@@ -9,4 +9,5 @@
 //= require bootstrap
 //= require bootstrap_ujs
 //= require jquery-fileupload/basic
-//= require_directory .
+//= require jquery-fileupload/vendor/tmpl
+//= require_tree .
