@@ -1,4 +1,4 @@
-<h1>New Upload</h1>
+<% title 'New Uploads' %>
 
 <% if flash[:notice] %>
   <div class="notice"><%= flash[:notice] %></div>
@@ -13,12 +13,13 @@
     <%= f.file_field :video, multiple: true, name: "upload[video]" %>
   </p>
   <p>
-    <%= f.submit %>
+    <%= f.submit "Upload", id: "submitUploads" %>
   </p>
-  <script id="template-upload" type="text/x-tmpl">
-    <div class="upload">
-      {%=o.name%}
-      <div class="progress"><div class="bar" style="width: 0%"></div></div>
-    </div>
-  </script>
 <% end %>
+<div id="progressContainer"></div>
+<script id="template-upload" type="text/x-tmpl">
+  <div class="upload">
+    {%=o.name%}
+    <div class="progress"><div class="bar" style="width: 0%"></div></div>
+  </div>
+</script>

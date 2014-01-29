@@ -56,7 +56,7 @@ class WebinarsUploader < CarrierWave::Uploader::Base
     #dir = "uploads/#{original_filename}"
     #partNum = Dir[File.join(dir, '**', '*')].count { |file| File.file?(file) }
     t = Time.now
-    "_part#{t.strftime('%y%m%d%H%M%S%3N')}"
+    "chunk_#{t.strftime('%y%m%d%H%M%S%3N')}"
   end
 
   # We don't want to cache the video files as this requires files to be uploaded twice.
