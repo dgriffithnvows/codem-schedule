@@ -7,14 +7,14 @@ class WebinarsUploader < CarrierWave::Uploader::Base
   # include CarrierWave::MiniMagick
 
   # Choose what kind of storage to use for this uploader:
-  storage :file
   # storage :fog
+  storage :file
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
     #"uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
-    "uploads"
+    "uploads/#{original_filename}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
@@ -51,6 +51,13 @@ class WebinarsUploader < CarrierWave::Uploader::Base
   # def filename
   #   "something.jpg" if original_filename
   # end
+
+  def filename
+    #dir = "uploads/#{original_filename}"
+    #partNum = Dir[File.join(dir, '**', '*')].count { |file| File.file?(file) }
+    t = Time.now
+    "_part#{t.strftime('%y%m%d%H%M%S%3N')}"
+  end
 
   # We don't want to cache the video files as this requires files to be uploaded twice.
   def move_to_cache

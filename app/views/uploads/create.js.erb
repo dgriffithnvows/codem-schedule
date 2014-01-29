@@ -1,5 +1,6 @@
 <% if @upload.new_record? %>
   alert("Failed to upload video: <%= j @upload.errors.full_messages.join(', ').html_safe %>");
 <% else %>
-  alert("File successfully uploaded.");
+//  alert("File successfully uploaded.");
+  console.log("<%= @upload.inspect %>");
 <% end %>
