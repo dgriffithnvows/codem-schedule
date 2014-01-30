@@ -29,6 +29,8 @@ Scheduler::Application.routes.draw do
     resources :hosts
     
     match '/statistics' => 'statistics#show'
+
+    resources :uploads
   end
 
   resources :jobs
@@ -36,6 +38,9 @@ Scheduler::Application.routes.draw do
   resources :presets, :hosts
 
   resources :uploads
+
+  match '/uploads/reconstruct', to: 'uploads#reconstruct', via: :post
+  match '/uploads/deleteAll', to: 'uploads#deleteAll', via: :post #This should be removed once new process is in place
   
   root :to => 'dashboard#show'
 end

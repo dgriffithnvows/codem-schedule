@@ -11,6 +11,10 @@
   <p>
     There are currently no uploads.
   </p>
+<% else %>
+  <p>
+    <%= link_to "Delete all", uploads_deleteAll_path, :method => :post %>
+  </p>
 <% end %>
 <div class="form-actions">
   <%= link_to 'New upload', new_upload_path, :class => 'btn btn-primary' %>

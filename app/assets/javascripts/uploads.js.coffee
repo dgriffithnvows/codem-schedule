@@ -26,8 +26,15 @@ jQuery ->
               data.context.find('.bar').css('width', progress + '%')
           maxChunkSize: 10000000
           done: (e, data) ->
-            console.log "here"
-            console.log data
+            name = data.files[0].name
+            uploadName = $("#upload_name").val()
+            $.ajax
+              type: "POST"
+              url: "/uploads/reconstruct"
+              data:
+                fileName: name
+                uploadName: uploadName
+              dataType: "json"
         #  formData (form) ->
 #          start: (e) ->
 #            console.log Object.keys e
@@ -42,7 +49,6 @@ jQuery ->
           if window.datasToSubmit.length > 0
             $(this).parents("form").hide()
             $.each window.datasToSubmit, (index, value) ->
-              console.log value
               value.submit()
             false
           else
