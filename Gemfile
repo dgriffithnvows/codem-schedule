@@ -11,6 +11,7 @@ gem 'chronic'
 gem 'nokogiri'
 
 gem 'carrierwave'
+gem 'pubnub'
 
 group :development, :test do
   gem 'rspec-rails'

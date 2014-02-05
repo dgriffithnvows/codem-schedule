@@ -54,22 +54,24 @@ class UploadsController < ApplicationController
     end
   end
   def reconstruct
-    fileName = params[:fileName].tr(" ", "_")
-    uploadName = params[:uploadName]
+    
     uploadDir = Rails.root.join("public", "uploads")
-    newDir = File.join(uploadDir, uploadName)
-    Dir.mkdir(newDir) unless File.exist?(newDir)
-    chunk = Dir[File.join(uploadDir, "chunks_of_#{fileName}", "chunk_*")].sort
-    File.open(File.join(newDir, fileName), "w") do |f|
-      chunk.each do |chunk| 
-        f.write(File.read(chunk))
-        File.delete(chunk)
-      end
-    end
-    Dir.delete(File.join(uploadDir, "chunks_of_#{fileName}")) if (Dir.entries(File.join(uploadDir, "chunks_of_#{fileName}")) - %w{ . .. }).empty?
-    flash[:notice] = "Reconstructed #{fileName} on server side"
+    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploadsAndSubmitJob.rb')} #{uploadDir} #{params[:fileName]} #{params[:uploadName]}")
+    Process.detach(pid)
+
     respond_to do |format|
-      format.any {render :json => {:respons => "It worked!"}}
+      format.any {render :json => {:respons => "reconstructing codem_reconstruct_#{params[:fileName]}_of_#{params[:uploadName]}"}}
     end
   end
+#  def prepareFileForCodem                                            #This is where we need to start tomorrow. We have just finished pubnub publishing the reconstruct message back to the page
+#    mtsParts = Dir[File.join(newDir, "*.MTS")].sort
+#    if mtsParts.any?
+#      File.open(File.join(newDir, fileName), "w") do |f|
+#        mtsParts.each do |part|
+#          f.write(File.read(part))
+#          File.delete(part)
+#        end
+#      end
+#    end
+#  end
 end

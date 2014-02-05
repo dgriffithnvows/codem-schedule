@@ -11,3 +11,4 @@ Gemfile.lock
 *.swp
 node_modules/
 public/uploads
+pubnub.log
