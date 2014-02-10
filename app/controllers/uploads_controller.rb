@@ -54,24 +54,11 @@ class UploadsController < ApplicationController
     end
   end
   def reconstruct
-    
-    uploadDir = Rails.root.join("public", "uploads")
-    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploadsAndSubmitJob.rb')} #{uploadDir} #{params[:fileName]} #{params[:uploadName]}")
+    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploadsAndSubmitJob.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
     Process.detach(pid)
 
     respond_to do |format|
-      format.any {render :json => {:respons => "reconstructing codem_reconstruct_#{params[:fileName]}_of_#{params[:uploadName]}"}}
+      format.any {render :json => {:status => "0", :statusDescription => "reconstructing codem_reconstruct_#{params[:fileName]}_of_#{params[:uploadName]}"}}
     end
   end
-#  def prepareFileForCodem                                            #This is where we need to start tomorrow. We have just finished pubnub publishing the reconstruct message back to the page
-#    mtsParts = Dir[File.join(newDir, "*.MTS")].sort
-#    if mtsParts.any?
-#      File.open(File.join(newDir, fileName), "w") do |f|
-#        mtsParts.each do |part|
-#          f.write(File.read(part))
-#          File.delete(part)
-#        end
-#      end
-#    end
-#  end
 end
