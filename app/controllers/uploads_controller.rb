@@ -60,11 +60,11 @@ class UploadsController < ApplicationController
 #     end
 #   end
 
-    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploads.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
+    pid = spawn("ruby #{Rails.root.join('lib','workers', 'reconstructUploads.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
     Process.detach(pid)
 
     File.open(Rails.root.join("log", "reconstructWorkersPID.log"), "a") do |f|
-      f.write("PID: #{pid} | Upload Name: #{params[:uploadName]} | File Name: #{params[:fileName]} | Number Of Files: #{params[:numberOfFiles]} \n")
+      f.write("|RECONSTRUCT WORKER = PID: #{pid.to_s.rjust(5, ' ')} | Number Of Files: #{params[:numberOfFiles].rjust(2, ' ')} | Upload Name: #{params[:uploadName]} | File Name: #{params[:fileName]} \n")
     end
 
     respond_to do |format|

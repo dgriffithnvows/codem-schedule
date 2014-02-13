@@ -17,7 +17,6 @@ jQuery ->
           add: (e, data) ->
             file = data.files[0]
             fileName = (file.name).replace(/\ /g, "_")
-            uploadName = ($("#upload_name").val()).replace(/\ /g, "_")
             types = /(\.|\/)(mts|mp4)$/i
             if types.test(file.type) || types.test(file.name)
               if uploadExtension == null
@@ -27,7 +26,7 @@ jQuery ->
                 return false
               data.context = $(tmpl("template-upload", file))
               $('#progressContainer').append(data.context)
-              fileUploads[fileName.toString()+"_of_"+uploadName] = data 
+              fileUploads[fileName.toString()] = data 
             else
               alert ""+fileName+" has an unexpected file format. Please choose only MTS and MP4 files."
           progress: (e, data) ->
@@ -55,6 +54,7 @@ jQuery ->
           else if ($("#upload_name").val()) == ''
             alert "Please name this upload"
           else if Object.keys(fileUploads).length > 0
+            uploadName = ($("#upload_name").val()).replace(/\ /g, "_")
             $(this).parents("form").hide()
             pubnub = PUBNUB.init
               subscribe_key: "sub-c-6f382e90-804e-11e2-b64e-12313f022c90"
@@ -67,6 +67,7 @@ jQuery ->
               data.submit()
           else
             alert "You must first select a file."
+
         reconstruct = (fileName, uploadName, numFiles)  -> 
           $.ajax
             type: "POST"
