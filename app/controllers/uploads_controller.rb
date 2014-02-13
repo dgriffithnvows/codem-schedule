@@ -60,7 +60,7 @@ class UploadsController < ApplicationController
 #     end
 #   end
 
-    pid = spawn("ruby #{Rails.root.join('lib','workers', 'reconstructUploads.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
+    pid = spawn("ruby #{Rails.root.join('lib', 'buildUploadForTranscoder.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
     Process.detach(pid)
 
     File.open(Rails.root.join("log", "reconstructWorkersPID.log"), "a") do |f|

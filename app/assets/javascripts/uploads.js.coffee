@@ -21,7 +21,7 @@ jQuery ->
             if types.test(file.type) || types.test(file.name)
               if uploadExtension == null
                 uploadExtension=(file.name).match(types)[0]
-              if uploadExtension != (file.name).match(types)[0]
+              else if uploadExtension != (file.name).match(types)[0]
                 alert "The uploaded files must be the same type of file."
                 return false
               data.context = $(tmpl("template-upload", file))
