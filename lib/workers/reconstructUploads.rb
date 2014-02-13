@@ -67,7 +67,7 @@ if(fileCount == numberOfFiles)
     ")
   }
 
-  pid = spawn("ruby #{File.join(railsRoot,'lib','workers', 'combine.rb')} #{uploadDir} #{uploadName} #{File.extname(fileName)[1..-1]}")
+  pid = spawn("ruby #{File.join(railsRoot,'lib','workers', 'combine.rb')} #{railsRoot} #{uploadName} #{File.extname(fileName)[1..-1]}")
   Process.detach(pid) 
 
   File.open(File.join(railsRoot, "log", "reconstructWorkersPID.log"), "a") do |f|

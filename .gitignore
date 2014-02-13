@@ -11,4 +11,5 @@ Gemfile.lock
 *.swp
 node_modules/
 public/uploads
+public/seminars
 pubnub.log

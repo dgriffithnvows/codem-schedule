@@ -1,12 +1,14 @@
-uploadDir = ARGV.shift
+railsRoot = ARGV.shift
 uploadName = ARGV.shift
 fileExtension = ARGV.shift
+
+uploadDir = File.join(railsRoot, "public", "uploads")
 
 require 'pubnub'
 
 if fileExtension.casecmp("MTS") == 0
   chunk = Dir.glob(File.join(uploadDir, uploadName, "*.MTS"), File::FNM_CASEFOLD).sort
-  File.open(File.join(uploadDir, uploadName+"_orig.MTS"), "w") do |f|
+  File.open(File.join(uploadDir, uploadName+"_orig."+fileExtension), "w") do |f|
     chunk.each do |chunk|
       f.write(File.read(chunk))
       File.delete(chunk)
@@ -19,7 +21,7 @@ elsif fileExtension.casecmp("mp4") == 0
   chunk.each do |chunk|
     mp4BoxCommand+=" -cat "+chunk
   end
-  mp4BoxCommand+=" #{File.join(uploadDir, uploadName)}_orig.mp4"
+  mp4BoxCommand+=" #{File.join(uploadDir, uploadName)}_orig."+fileExtension
   `#{mp4BoxCommand}`
   chunk.each do |chunk|
     File.delete(chunk)
@@ -35,7 +37,19 @@ pubnub = Pubnub.new(
 )
 pubnub.publish(
   :channel  => "codem_upload_#{uploadName}",
-  :message  => {:status => "combine", :details => defined?(details)==nil ? "no details" : details, :log => "#{uploadName} is now combine. And ready to go to the transcoder."}
+  :message  => {:status => "combine", :details => defined?(details)==nil ? "no details" : details, :log => "#{uploadName} is now combine."}
+){ |envelope|
+  puts("
+    \nchannel: #{envelope.channel}
+    \nmsg: #{envelope.message} 
+  ")
+}
+
+details = `curl -d 'input=#{File.join(railsRoot, uploadDir, uploadName+"_orig."+fileExtension)}&output=#{File.join(railsRoot, "seminar", uploadName+"."+fileExtension)}&preset=h264' http://localhost:3000/api/jobs`
+
+pubnub.publish(
+  :channel  => "codem_upload_#{uploadName}",
+  :message  => {:status => "combine", :details => defined?(details)==nil ? "no details" : details, :log => "#{uploadName} is now scheduled."}
 ){ |envelope|
   puts("
     \nchannel: #{envelope.channel}
