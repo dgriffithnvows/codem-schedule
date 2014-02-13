@@ -35,7 +35,7 @@ class UploadsController < ApplicationController
     end
   end
 
-  def deleteAll   #this should be replaced with database management in code
+  def deleteAll   #this should be replaced with database management in the workers
     if Upload.destroy_all()
       flash[:notice] = "Delete all uploads"
       redirect_to uploads_path
@@ -54,8 +54,18 @@ class UploadsController < ApplicationController
     end
   end
   def reconstruct
-    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploadsAndSubmitJob.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
+#   if File.exist?(Rails.root.join("public", "uploads", "#{params[:uploadName]}_orig.*"))
+#     respond_to do |format|
+#       format.any {render :json => {:status => "1", :statusDescription => "The file `#{params[:uploadName]}` already exists. Choose another name."}}
+#     end
+#   end
+
+    pid = spawn("ruby #{Rails.root.join('app','workers', 'reconstructUploads.rb')} #{Rails.root.to_s} #{params[:fileName]} #{params[:uploadName]} #{params[:numberOfFiles]}")
     Process.detach(pid)
+
+    File.open(Rails.root.join("log", "reconstructWorkersPID.log"), "a") do |f|
+      f.write("PID: #{pid} | Upload Name: #{params[:uploadName]} | File Name: #{params[:fileName]} | Number Of Files: #{params[:numberOfFiles]} \n")
+    end
 
     respond_to do |format|
       format.any {render :json => {:status => "0", :statusDescription => "reconstructing codem_reconstruct_#{params[:fileName]}_of_#{params[:uploadName]}"}}

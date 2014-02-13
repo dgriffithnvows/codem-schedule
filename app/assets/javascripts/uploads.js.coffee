@@ -3,13 +3,14 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 jQuery -> 
-  datasToSubmit = {}  #datasToSubmit (very poorly names) holds
-                             #  submit:         function - tells jQuery-fileupload to submit the file to the server
-  $.getScript "/assets/jquery-fileupload/vendor/jquery.ui.widget.js", () -> #These three lines should be removed in production because the asset pipeline combines the js files and they execute in the right order see: https://github.com/tors/jquery-fileupload-rails/issues/58
-    $.getScript "/assets/jquery-fileupload/jquery.iframe-transport.js", () ->
-      $.getScript "/assets/jquery-fileupload/jquery.fileupload.js", () ->
+  fileUploads = {}  
+  $.getScript "/assets/jquery-fileupload/vendor/jquery.ui.widget.js", () ->       #These three lines should be removed in production because the asset 
+    $.getScript "/assets/jquery-fileupload/jquery.iframe-transport.js", () ->     #pipeline combines the js files and they execute in the right order
+      $.getScript "/assets/jquery-fileupload/jquery.fileupload.js", () ->         #see: https://github.com/tors/jquery-fileupload-rails/issues/58
+
         uploadName = ''
         uploadExtension = null
+
         $("#upload_video")
         .fileupload
           dataType: "script"
@@ -26,22 +27,17 @@ jQuery ->
                 return false
               data.context = $(tmpl("template-upload", file))
               $('#progressContainer').append(data.context)
-              datasToSubmit[fileName.toString()+"_of_"+uploadName] = {}
-              datasToSubmit[fileName.toString()+"_of_"+uploadName] =
-                submit: data 
-                reconsturcted: false
-                combined: false
+              fileUploads[fileName.toString()+"_of_"+uploadName] = data 
             else
               alert ""+fileName+" has an unexpected file format. Please choose only MTS and MP4 files."
           progress: (e, data) ->
             if data.context
               progress = parseInt(data.loaded / data.total * 100, 10)
               data.context.find('.bar').css('width', progress + '%')
-          maxChunkSize: 10000000
+          maxChunkSize: 15000000
           done: (e, data) ->
             name = (data.files[0].name).replace(/\ /g, "_")
-            uploadName = ($("#upload_name").val()).replace(/\ /g, "_")
-            reconstruct name, uploadName, Object.keys(datasToSubmit).length
+            reconstruct name, uploadName, Object.keys(fileUploads).length
         #  formData (form) ->
 #          start: (e) ->
 #            console.log Object.keys e
@@ -49,11 +45,16 @@ jQuery ->
 #          chunksend: (e, data) ->
 #            console.log "chunk"
 
-#          autoUpload: false #This will prevent the upload until you call it to upload
 #          dropZone: "string" #The description is kina vague but this is how you change the dropzone(probably selector). the default is the entire document
 #          fileInput: #set to null to disable the change listener
-        $("#submitUploads").click ->
-          if Object.keys(datasToSubmit).length > 0 ####This is wrong #######
+        $("#submitUploads").click (e) ->
+          e.preventDefault()
+          specialChars = ($("#upload_name").val()).match(/[^a-zA-Z0-9- _]+/g)
+          if specialChars!=null 
+            alert "Your input must contain only Letters, Numbers, Underscores(_), and hyphens(-)."
+          else if ($("#upload_name").val()) == ''
+            alert "Please name this upload"
+          else if Object.keys(fileUploads).length > 0
             $(this).parents("form").hide()
             pubnub = PUBNUB.init
               subscribe_key: "sub-c-6f382e90-804e-11e2-b64e-12313f022c90"
@@ -61,14 +62,12 @@ jQuery ->
             pubnub.subscribe
               channel: "codem_upload_"+uploadName
               message: (m) ->
-                console.log(m)
-            $.each datasToSubmit, (index, value) ->
-              value["submit"].submit()
-            false
+                console.log(m.log)
+            $.each fileUploads, (i, data) ->
+              data.submit()
           else
             alert "You must first select a file."
-            false
-        reconstruct = (fileName, uploadName, numFiles)  -> # send file 1 of 12 etc
+        reconstruct = (fileName, uploadName, numFiles)  -> 
           $.ajax
             type: "POST"
             url: "/uploads/reconstruct"
@@ -78,12 +77,4 @@ jQuery ->
               numberOfFiles: numFiles
             dataType: "json"
             success: (data, status, bar) -> 
-              console.log "data | status | bar"
-              console.log data
-              console.log status
-              console.log bar
-                                            
-                                            
-                                            
-                                            
-                                            
+              console.log "Preparing to reconstruct "+fileName

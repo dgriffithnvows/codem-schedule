@@ -7,7 +7,7 @@
 <%= form_for @upload, :html => {:multipart => true} do |f| %>
   <p>
     <%= f.label :name %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, :autocomplete => :off %>
   </p>
   <p>
     <%= f.file_field :video, multiple: true, name: "upload[video]" %>
